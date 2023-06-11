@@ -28,6 +28,10 @@ void setup() {
 }
 
 void loop() {
+  Serial.println(digitalRead(3));
+  Serial.print(digitalRead(4));
+  Serial.print(digitalRead(5));
+  Serial.print(digitalRead(6));
   byte column0 = digitalRead(3);
   byte column1 = digitalRead(4);
   byte column2 = digitalRead(5);
@@ -36,31 +40,31 @@ void loop() {
   byte column5 = digitalRead(8);
   byte column6 = digitalRead(9);
   byte reset = digitalRead(10);
-  if (column0 == 0) {
+  if (column0 == 1) {
     drop(0);
   }
-  else if (column1 == 0) {
+  else if (column1 == 1) {
     drop(1);
   }
-  else if (column2 == 0) {
+  else if (column2 == 1) {
     drop(2);
   }
-  else if (column3 == 0) {
+  else if (column3 == 1) {
     drop(3);
   }
-  else if (column4 == 0) {
+  else if (column4 == 1) {
     drop(4);
   }
-  else if (column5 == 0) {
+  else if (column5 == 1) {
     drop(5);
   }
-  else if (column6 == 0) {
+  else if (column6 == 1) {
     drop(6);
   }
-  else if (reset == 0) {
+  else if (reset == 1) {
     for(byte x = 0; x<7; x++){
-    rows[x][0] = 7;
-    leds_init();
+      rows[x][0] = 7;
+      leds_init();
     }
     FastLED.show();
   }
@@ -73,8 +77,8 @@ void leds_init() //turns off all LEDs
     leds[x] = CRGB::Black;
   }
 }
-
-void enough_in_a_row_direction(byte board, byte start_x, byte start_y, byte x_offset_param, byte y_offset_param){
+/*
+void enough_in_a_row_direction(byte[7][7] board, byte start_x, byte start_y, byte x_offset_param, byte y_offset_param){
   try {
     byte current_color = board[start_x][start_y];
     if (current_color == 0){
@@ -136,6 +140,7 @@ void win_at(byte x, byte y,byte board){
     return 0
   }
 }
+*/
 
 void drop(byte column){
   CRGB color = CRGB::Yellow;
@@ -153,7 +158,7 @@ void drop(byte column){
     FastLED.delay(10);
   }
   leds[rows[column][rows[column][0]]] = color;
-  win_at(column,rows[column][rows[column][0]], boardValues)
+  //win_at(column,rows[column][rows[column][0]], boardValues)
   if (rows[7][0] == 2) {
     leds[49] = CRGB::Yellow;
   }
