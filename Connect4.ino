@@ -1,4 +1,5 @@
 #include <FastLED.h> // include the FastLED library code
+#include <vector>
 
 // define constants
 #define DATA_PIN 2
@@ -121,19 +122,26 @@ void drop(byte column) {
   }
 }
 
+void displayWin(std::vector<byte[]> winCoords) {
+  
+}
 bool checkWin(byte playedCol) {
   byte playedRow = cols[playedCol][0];
   bool foundWin = false;
+  
+  std::vector<byte[]> winCoords;
+  winCoords.push_back({playedRow, playedCol});
+
   // declare bounds
   byte leftmostCol = max(playedCol - 3, 0);
   byte rightmostCol = min(playedCol + 3, COLS - 1);
 
-  // https://stackoverflow.com/questions/39062111/java-how-to-check-diagonal-connect-four-win-in-2d-array
   // check vertical
   byte numFoundInARow = 1;
   if (cols[column][0] > 3) {
     for (byte i = 1; i < 4; i++) {
       if (board[playedRow][playedCol] == board[playedRow][playedCol - i]) {
+        winCoords.push_back({playedRow, playedCol - i});
         numFoundInARow++;
       }
       else {
@@ -143,7 +151,12 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow == 4) {
     foundWin = true;
+    displayWin(winCoords);
     return true;
+  }
+  else {
+    winCoords.clear();
+    winCoords.push_back({playedRow, playedCol});
   }
 
   // check horizontal
@@ -151,6 +164,7 @@ bool checkWin(byte playedCol) {
   for(byte i = column; i > leftmostCol; i--) { //check left
     if (board[playedRow][playedCol] == board[playedRow][i-1]) {
       numFoundInARow++;
+      winCoords.push_back({playedRow, i-1});
     }
     else {
       break;
@@ -159,6 +173,7 @@ bool checkWin(byte playedCol) {
   for(byte i = column; i < rightmostCol; i++) { //check right
     if (board[playedRow][playedCol] == board[playedRow][i+1]) {
       numFoundInARow++;
+      winCoords.push_back({playedRow, i+1});
     }
     else {
       break;
@@ -166,7 +181,12 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow >= 4) {
     foundWin = true;
+    displayWin(winCoords);
     return true;
+  }
+  else {
+    winCoords.clear();
+    winCoords.push_back({playedRow, playedCol});
   }
 
   // check southwest to northeast diagonal
@@ -177,6 +197,7 @@ bool checkWin(byte playedCol) {
     }
     if (board[playedRow][playedCol] == board[playedRow - i][playedCol - i]) {
       numFoundInARow++;
+      winCoords.push_back({playedRow - i, playedCol - i});
     }
     else {
       break;
@@ -188,6 +209,7 @@ bool checkWin(byte playedCol) {
     }
     if (board[playedRow][playedCol] == board[playedRow + i][playedCol + i]) {
       numFoundInARow++;
+      winCoords.push_back({playedRow + i, playedCol + i});
     }
     else {
       break;
@@ -195,7 +217,12 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow >= 4) {
     foundWin = true;
+    displayWin(winCoords);
     return true;
+  }
+  else {
+    winCoords.clear();
+    winCoords.push_back({playedRow, playedCol});
   }
 
   // check northwest to southeast diagonal
@@ -206,6 +233,7 @@ bool checkWin(byte playedCol) {
     }
     if (board[playedRow][playedCol] == board[playedRow - i][playedCol + i]) {
       numFoundInARow++;
+      winCoords.push_back({playedRow - i, playedCol + i});
     }
     else {
       break;
@@ -217,6 +245,7 @@ bool checkWin(byte playedCol) {
     }
     if (board[playedRow][playedCol] == board[playedRow + i][playedCol - i]) {
       numFoundInARow++;
+      winCoords.push_back({playedRow + i, playedCol - i});
     }
     else {
       break;
@@ -224,7 +253,12 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow >= 4) {
     foundWin = true;
+    displayWin(winCoords);
     return true;
+  }
+  else {
+    winCoords.clear();
+    winCoords.push_back({playedRow, playedCol});
   }
 
   return false;
