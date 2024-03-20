@@ -121,7 +121,7 @@ void drop(byte column) {
   }
 }
 
-void checkWin(byte playedCol) {
+bool checkWin(byte playedCol) {
   byte playedRow = cols[playedCol][0];
   bool foundWin = false;
   // declare bounds
@@ -145,18 +145,31 @@ void checkWin(byte playedCol) {
   }
   if (numFoundInARow == 4) {
     foundWin = true;
+    return true;
   }
 
   // check horizontal
   numFoundInARow = 1;
-
-
-
-
-
-  // check vertical
-
-
-  if (score == 4)
+  for(byte i = column; i > leftmostCol; i--) { //check left
+    if (board[playedRow][playedCol] == board[playedRow][i-1]) {
+      numFoundInARow++;
+    }
+    else {
+      break;
+    }
+  }
+  for(byte i = column; i < rightmostCol; i++) { //check right
+    if (board[playedRow][playedCol] == board[playedRow][i+1]) {
+      numFoundInARow++;
+    }
+    else {
+      break;
+    }
+  }
+  if (numFoundInARow >= 4) {
+    foundWin = true;
     return true;
+  }
+
+
 }
