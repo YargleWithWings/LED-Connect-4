@@ -127,8 +127,6 @@ bool checkWin(byte playedCol) {
   // declare bounds
   byte leftmostCol = max(playedCol - 3, 0);
   byte rightmostCol = min(playedCol + 3, COLS - 1);
-  byte bottomRow = max(playedRow - 3, 0);
-  byte topRow = min(playedRow + 3, ROWS - 1);
 
   // https://stackoverflow.com/questions/39062111/java-how-to-check-diagonal-connect-four-win-in-2d-array
   // check vertical
@@ -171,5 +169,63 @@ bool checkWin(byte playedCol) {
     return true;
   }
 
+  // check southwest to northeast diagonal
+  numFoundInARow = 1;
+  for(byte i = 1; i < 4; i++) { //check up
+    if (playedRow - i < 0 || playedCol - i < 0) {
+      break;
+    }
+    if (board[playedRow][playedCol] == board[playedRow - i][playedCol - i]) {
+      numFoundInARow++;
+    }
+    else {
+      break;
+    }
+  }
+  for(byte i = 1; i < 4; i++) { //check down
+    if (playedRow + i >= ROWS || playedCol + i >= COLS) {
+      break;
+    }
+    if (board[playedRow][playedCol] == board[playedRow + i][playedCol + i]) {
+      numFoundInARow++;
+    }
+    else {
+      break;
+    }
+  }
+  if (numFoundInARow >= 4) {
+    foundWin = true;
+    return true;
+  }
 
+  // check northwest to southeast diagonal
+  numFoundInARow = 1;
+  for(byte i = 1; i < 4; i++) { //check up
+    if (playedRow - i < 0 || playedCol + i >= COLS) {
+      break;
+    }
+    if (board[playedRow][playedCol] == board[playedRow - i][playedCol + i]) {
+      numFoundInARow++;
+    }
+    else {
+      break;
+    }
+  }
+  for(byte i = 1; i < 4; i++) { //check down
+    if (playedRow + i >= ROWS || playedCol - i < 0) {
+      break;
+    }
+    if (board[playedRow][playedCol] == board[playedRow + i][playedCol - i]) {
+      numFoundInARow++;
+    }
+    else {
+      break;
+    }
+  }
+  if (numFoundInARow >= 4) {
+    foundWin = true;
+    return true;
+  }
+
+  return false;
 }
