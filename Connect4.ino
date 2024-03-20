@@ -1,5 +1,6 @@
 #include <FastLED.h>     // include the FastLED library code
 
+// define constants
 #define DATA_PIN     2
 #define NUM_LEDS    50
 #define MAX_BRIGHTNESS 255
@@ -8,14 +9,26 @@
 #define ROWS 7
 #define COLS 7
 
+// the LED strand
 CRGB leds[NUM_LEDS];
+
+// the light arrangement
 byte cols[ROWS][COLS+1] = {{7,48,47,46,45,44,43,42},{7,35,36,37,38,39,40,41},{7,34,33,32,31,30,29,28},{7,21,22,23,24,25,26,27},{7,20,19,18,17,16,15,14},{7,7,8,9,10,11,12,13},{7,6,5,4,3,2,1,0}};
-bool playerTurn = 1;
-byte board[ROWS][COLS] = {{2,2,2,2,2,2,2},{2,2,2,2,2,2,2},{2,2,2,2,2,2,2},{2,2,2,2,2,2,2},{2,2,2,2,2,2,2},{2,2,2,2,2,2,2},{2,2,2,2,2,2,2}};
-byte columnButtonPins[COLS] = {3, 4, 5, 6, 7, 8, 9};  // Pins connected to buttons
-byte resetButtonPin = 10;
+
+//the current state of the board
+byte board[ROWS][COLS];
+for (int i = 0; i < ROWS; ++i) {
+  for (int j = 0; j < COLS; ++j) {
+    board[i][j] = 2;
+  }
+}
+
+bool playerTurn = 1; // 1 is red, 0 is blue
+byte columnButtonPins[COLS] = {3, 4, 5, 6, 7, 8, 9};  // Pins connected to buttons to drop pieces
+byte resetButtonPin = 10; // Button to reset the board
 bool gameOver = false;
 
+// Runs once at the start of the program
 void setup() {
   Serial.begin(9600);
   FastLED.addLeds<LED_TYPE, DATA_PIN, RGB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
@@ -24,28 +37,32 @@ void setup() {
     pinMode(columnButtonPins[i], INPUT_PULLUP);
   }
   leds_init();
-  leds[49] = CRGB::Red;
+  leds[49] = CRGB::Red; // Shows who's turn it is
   FastLED.show();
 }
 
+// Continuously runs while arduino is on
 void loop() {
-  Serial.println(digitalRead(columnButtonPins[4]));
+  // Check if a button is pressed
   for (byte i = 0; i < COLS; i++) {
     byte buttonState = digitalRead(columnButtonPins[i]);
 
+    // If a button is pressed, drop a piece in that column
     if (buttonState == HIGH) {
       drop(i);
     }
   }
+
+  // If the reset button is pressed, reset the board
   if (digitalRead(resetButtonPin) == HIGH) {
     reset();
   }
-  delay(100);
+  delay(50);
 }
 
 void reset() //resets the board
 {
-  for(byte x = 0; x<COLS; x++){
+  for(byte x = 0; x < COLS; x++){
       cols[x][0] = 7;
       leds_init();
     }
