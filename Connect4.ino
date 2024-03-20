@@ -115,17 +115,27 @@ void drop(byte column) {
     FastLED.delay(1);
 
     //check if the player won
-    checkWin(column);
+    checkWin(column, color);
 
     // update the row we're on
     cols[column][0] -= 1;
   }
 }
 
-void displayWin(std::vector<byte[]> winCoords) {
-  
+void displayWin(std::vector<byte[]> winCoords, CRGB color) {
+  for(byte cycle = 0; cycle < 5, cycle++) {
+    for (byte i = 0; i < winCoords.size(); i++) {
+      leds[cols[winCoords[i][0]][winCoords[i][1]]] = CRGB::Black;
+    }
+    FastLED.delay(200);
+    for (byte i = 0; i < winCoords.size(); i++) {
+      leds[cols[winCoords[i][0]][winCoords[i][1]]] = color;
+    }
+    FastLED.delay(200);
+  }
 }
-bool checkWin(byte playedCol) {
+
+bool checkWin(byte playedCol, CRGB color) {
   byte playedRow = cols[playedCol][0];
   bool foundWin = false;
   
@@ -151,7 +161,7 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow == 4) {
     foundWin = true;
-    displayWin(winCoords);
+    displayWin(winCoords, color);
     return true;
   }
   else {
@@ -181,7 +191,7 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow >= 4) {
     foundWin = true;
-    displayWin(winCoords);
+    displayWin(winCoords, color);
     return true;
   }
   else {
@@ -217,7 +227,7 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow >= 4) {
     foundWin = true;
-    displayWin(winCoords);
+    displayWin(winCoords, color);
     return true;
   }
   else {
@@ -253,7 +263,7 @@ bool checkWin(byte playedCol) {
   }
   if (numFoundInARow >= 4) {
     foundWin = true;
-    displayWin(winCoords);
+    displayWin(winCoords, color);
     return true;
   }
   else {
